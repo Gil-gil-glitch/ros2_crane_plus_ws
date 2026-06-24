@@ -100,7 +100,11 @@ class CraneGUI(QWidget):
         home_button = QPushButton("Home Position")
         home_button.clicked.connect(self.home_position)
 
+        pick_button = QPushButton("Pick Can")
+        pick_button.clicked.connect(self.pick_pose)
+
         button_row.addWidget(home_button)
+        button_row.addWidget(pick_button)
 
         self.layout.addLayout(button_row)
 
