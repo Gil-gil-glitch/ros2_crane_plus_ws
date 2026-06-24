@@ -1,0 +1,35 @@
+[0.492s] Invoking command in '/home/ri-one/ros2_crane_ws/build/crane_plus_driver': PYTHONPATH=/home/ri-one/ros2_crane_ws/build/crane_plus_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/ri-one/ros2_crane_ws/build/crane_plus_driver/build
+[0.683s] running develop
+[0.816s] Removing /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane-plus-driver.egg-link (link to .)
+[0.834s] Invoked command in '/home/ri-one/ros2_crane_ws/build/crane_plus_driver' returned '0': PYTHONPATH=/home/ri-one/ros2_crane_ws/build/crane_plus_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/ri-one/ros2_crane_ws/build/crane_plus_driver/build
+[0.835s] Invoking command in '/home/ri-one/ros2_crane_ws/src/crane_plus_driver': PYTHONPATH=/home/ri-one/ros2_crane_ws/build/crane_plus_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/crane_plus_driver build --build-base /home/ri-one/ros2_crane_ws/build/crane_plus_driver/build install --record /home/ri-one/ros2_crane_ws/build/crane_plus_driver/install.log --single-version-externally-managed install_data --force
+[1.023s] running egg_info
+[1.024s] writing ../../build/crane_plus_driver/crane_plus_driver.egg-info/PKG-INFO
+[1.024s] writing dependency_links to ../../build/crane_plus_driver/crane_plus_driver.egg-info/dependency_links.txt
+[1.024s] writing entry points to ../../build/crane_plus_driver/crane_plus_driver.egg-info/entry_points.txt
+[1.024s] writing requirements to ../../build/crane_plus_driver/crane_plus_driver.egg-info/requires.txt
+[1.024s] writing top-level names to ../../build/crane_plus_driver/crane_plus_driver.egg-info/top_level.txt
+[1.026s] reading manifest file '../../build/crane_plus_driver/crane_plus_driver.egg-info/SOURCES.txt'
+[1.026s] writing manifest file '../../build/crane_plus_driver/crane_plus_driver.egg-info/SOURCES.txt'
+[1.026s] running build
+[1.026s] running build_py
+[1.026s] copying crane_plus_driver/gui.py -> /home/ri-one/ros2_crane_ws/build/crane_plus_driver/build/lib/crane_plus_driver
+[1.027s] running install
+[1.027s] running install_lib
+[1.027s] creating /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane_plus_driver
+[1.027s] copying /home/ri-one/ros2_crane_ws/build/crane_plus_driver/build/lib/crane_plus_driver/gui.py -> /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane_plus_driver
+[1.027s] copying /home/ri-one/ros2_crane_ws/build/crane_plus_driver/build/lib/crane_plus_driver/__init__.py -> /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane_plus_driver
+[1.028s] copying /home/ri-one/ros2_crane_ws/build/crane_plus_driver/build/lib/crane_plus_driver/driver_node.py -> /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane_plus_driver
+[1.028s] byte-compiling /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane_plus_driver/gui.py to gui.cpython-310.pyc
+[1.028s] byte-compiling /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane_plus_driver/__init__.py to __init__.cpython-310.pyc
+[1.028s] byte-compiling /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane_plus_driver/driver_node.py to driver_node.cpython-310.pyc
+[1.029s] running install_data
+[1.029s] copying resource/crane_plus_driver -> /home/ri-one/ros2_crane_ws/install/crane_plus_driver/share/ament_index/resource_index/packages
+[1.029s] copying package.xml -> /home/ri-one/ros2_crane_ws/install/crane_plus_driver/share/crane_plus_driver
+[1.029s] running install_egg_info
+[1.030s] Copying ../../build/crane_plus_driver/crane_plus_driver.egg-info to /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages/crane_plus_driver-0.0.0-py3.10.egg-info
+[1.031s] running install_scripts
+[1.046s] Installing driver_node script to /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/crane_plus_driver
+[1.047s] Installing gui_node script to /home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/crane_plus_driver
+[1.047s] writing list of installed files to '/home/ri-one/ros2_crane_ws/build/crane_plus_driver/install.log'
+[1.067s] Invoked command in '/home/ri-one/ros2_crane_ws/src/crane_plus_driver' returned '0': PYTHONPATH=/home/ri-one/ros2_crane_ws/build/crane_plus_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ri-one/ros2_crane_ws/install/crane_plus_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/crane_plus_driver build --build-base /home/ri-one/ros2_crane_ws/build/crane_plus_driver/build install --record /home/ri-one/ros2_crane_ws/build/crane_plus_driver/install.log --single-version-externally-managed install_data --force

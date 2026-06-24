@@ -1,0 +1,4 @@
+[console_scripts]
+driver_node = crane_plus_driver.driver_node:main
+gui_node = crane_plus_driver.gui:main
+
