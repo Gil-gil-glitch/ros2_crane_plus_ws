@@ -271,7 +271,12 @@ class CraneGUI(QWidget):
         ]
 
         self.apply_pose(lift_pose)
-        self.publish_positions()  
+
+        self.pick_state = "grasped"          # ← this was missing
+        self.place_button.setEnabled(True)   # ← this was also missing
+        self.status_label.setText(
+            "Can lifted. Press Place Can."
+        )
 
     def place_can(self):
 
