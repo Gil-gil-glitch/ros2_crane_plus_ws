@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 import sys
+import math
 
 import rclpy
 from rclpy.node import Node
@@ -9,11 +12,13 @@ from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
     QVBoxLayout,
+    QHBoxLayout,
     QLabel,
     QSlider,
     QPushButton,
 )
-from PyQt5.QtCore import Qt
+
+from PyQt5.QtCore import Qt, QTimer
 
 
 class RosPublisher(Node):
@@ -35,9 +40,8 @@ class CraneGUI(QWidget):
 
         self.ros_node = ros_node
 
-        self.setWindowTitle("Crane+ Control")
-
-        self.layout = QVBoxLayout()
+        self.setWindowTitle("Crane+ Slider Control")
+        self.resize(900, 400)
 
         self.joint_names = [
             "crane_plus_joint1",
@@ -48,35 +52,67 @@ class CraneGUI(QWidget):
         ]
 
         self.sliders = []
+        self.value_labels = []
 
-        for joint in self.joint_names:
+        self.layout = QVBoxLayout()
 
-            label = QLabel(joint)
-            self.layout.addWidget(label)
+        title = QLabel("Crane+ Manual Control")
+        title.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(title)
+
+        for joint_name in self.joint_names:
+
+            row = QHBoxLayout()
+
+            joint_label = QLabel(joint_name)
+            joint_label.setMinimumWidth(180)
 
             slider = QSlider(Qt.Horizontal)
 
-            # -150 deg to +150 deg
+            # Degrees
             slider.setMinimum(-150)
             slider.setMaximum(150)
             slider.setValue(0)
+
+            value_label = QLabel("0° (0.00 rad)")
+            value_label.setMinimumWidth(120)
+
+            slider.valueChanged.connect(
+                lambda value, lbl=value_label:
+                self.update_label(lbl, value)
+            )
 
             slider.valueChanged.connect(
                 self.publish_positions
             )
 
             self.sliders.append(slider)
-            self.layout.addWidget(slider)
+            self.value_labels.append(value_label)
 
-        home_button = QPushButton("Home")
+            row.addWidget(joint_label)
+            row.addWidget(slider)
+            row.addWidget(value_label)
 
-        home_button.clicked.connect(
-            self.home_position
-        )
+            self.layout.addLayout(row)
 
-        self.layout.addWidget(home_button)
+        button_row = QHBoxLayout()
+
+        home_button = QPushButton("Home Position")
+        home_button.clicked.connect(self.home_position)
+
+        button_row.addWidget(home_button)
+
+        self.layout.addLayout(button_row)
 
         self.setLayout(self.layout)
+
+    def update_label(self, label, deg):
+
+        rad = math.radians(deg)
+
+        label.setText(
+            f"{deg:>4d}° ({rad:+.2f} rad)"
+        )
 
     def home_position(self):
 
@@ -92,7 +128,7 @@ class CraneGUI(QWidget):
         msg.name = self.joint_names
 
         msg.position = [
-            slider.value() * 3.14159 / 180.0
+            math.radians(slider.value())
             for slider in self.sliders
         ]
 
@@ -110,15 +146,15 @@ def main():
     gui = CraneGUI(ros_node)
     gui.show()
 
-    from PyQt5.QtCore import QTimer
-
     timer = QTimer()
+
     timer.timeout.connect(
         lambda: rclpy.spin_once(
             ros_node,
             timeout_sec=0.0
         )
     )
+
     timer.start(10)
 
     app.exec()
