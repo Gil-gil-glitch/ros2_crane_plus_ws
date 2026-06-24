@@ -198,14 +198,13 @@ class CraneGUI(QWidget):
         self.ros_node.joint_pub.publish(msg)
 
     def apply_pose(self, pose_deg):
-
-        for slider, angle in zip(
-            self.sliders,
-            pose_deg
-        ):
+        # Block signals to avoid redundant mid-loop publishes
+        for slider, angle in zip(self.sliders, pose_deg):
+            slider.blockSignals(True)
             slider.setValue(angle)
+            slider.blockSignals(False)
 
-        self.publish_positions()
+        self.publish_positions() 
 
     def home_position(self):
 
@@ -258,7 +257,6 @@ class CraneGUI(QWidget):
         )
 
     def confirm_grip(self):
-
         if self.pick_state != "approaching":
             return
 
@@ -273,14 +271,7 @@ class CraneGUI(QWidget):
         ]
 
         self.apply_pose(lift_pose)
-
-        self.pick_state = "grasped"
-
-        self.place_button.setEnabled(True)
-
-        self.status_label.setText(
-            "Can lifted. Press Place Can."
-        )
+        self.publish_positions()  
 
     def place_can(self):
 
