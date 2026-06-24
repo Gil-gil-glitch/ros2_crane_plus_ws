@@ -8,6 +8,11 @@ from sensor_msgs.msg import JointState
 from dynamixel_sdk import PortHandler
 from dynamixel_sdk import PacketHandler
 
+from std_msgs import msg
+from std_msgs.msg import Int32
+
+ADDR_MOVING_SPEED = 32 
+
 
 PROTOCOL_VERSION = 1.0
 
@@ -23,6 +28,7 @@ JOINT_TO_ID = {
     "crane_plus_joint4": 4,
     "crane_plus_joint_hand": 5,
 }
+
 
 
 def rad_to_dxl(rad):
@@ -60,6 +66,13 @@ class CranePlusDriver(Node):
             10,
         )
 
+        self.speed_sub = self.create_subscription(
+            Int32,
+            "/crane_plus_speed",
+            self.speed_callback,
+            10
+        )
+
     def command_callback(self, msg):
 
         for joint_name, position_rad in zip(
@@ -89,7 +102,25 @@ class CranePlusDriver(Node):
                 f"({goal_position})"
             )
 
+    def speed_callback(self, msg):
 
+        speed = int(msg.data / 100.0 * 1023)
+
+        speed = max(20, min(speed, 1023))
+
+        for dxl_id in self.motor_ids:
+
+            self.packet_handler.write2ByteTxRx(
+                self.port_handler,
+                dxl_id,
+                ADDR_MOVING_SPEED,
+                speed
+            )
+
+        self.get_logger().info(
+            f"Speed set to {msg.data}%"
+        )
+        
 def main(args=None):
 
     rclpy.init(args=args)

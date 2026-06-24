@@ -108,7 +108,7 @@ class CranePlusDriver(Node):
 
         speed = max(20, min(speed, 1023))
 
-        for dxl_id in self.motor_ids:
+        for dxl_id in JOINT_TO_ID.values():
 
             self.packet_handler.write2ByteTxRx(
                 self.port_handler,
@@ -120,7 +120,6 @@ class CranePlusDriver(Node):
         self.get_logger().info(
             f"Speed set to {msg.data}%"
         )
-        
 def main(args=None):
 
     rclpy.init(args=args)
