@@ -125,6 +125,22 @@ class CraneGUI(QWidget):
 
         self.publish_positions()
 
+    def pick_pose(self):
+
+        # Pose Angles in Degrees for Each Joint
+        pose_deg = [
+            0,      # base
+            30,     # shoulder
+            -80,    # elbow
+            50,     # wrist
+            20      # gripper open
+        ]
+
+        for slider, angle in zip(self.sliders, pose_deg):
+            slider.setValue(angle)
+
+        self.publish_positions()
+
     def publish_positions(self):
 
         msg = JointState()
