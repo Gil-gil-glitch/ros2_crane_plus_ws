@@ -24,7 +24,7 @@ class RosPublisher(Node):
             "/crane_plus_speed",
             10
         )
-        
+
 class CraneGUI(QWidget):
 
     def __init__(self, ros_node):
@@ -262,21 +262,17 @@ class CraneGUI(QWidget):
         if self.pick_state != "approaching":
             return
 
-        self.status_label.setText(
-            "Lifting can..."
-        )
+        grip = self.sliders[4].value()
 
         lift_pose = [
             0,
             10,
             -45,
             20,
-            -35
+            grip
         ]
 
-        self.apply_pose(
-            lift_pose
-        )
+        self.apply_pose(lift_pose)
 
         self.pick_state = "grasped"
 
@@ -287,6 +283,8 @@ class CraneGUI(QWidget):
         )
 
     def place_can(self):
+
+        grip = self.sliders[4].value()
 
         if self.pick_state != "grasped":
             return
@@ -300,7 +298,7 @@ class CraneGUI(QWidget):
             10,
             -45,
             20,
-            -35
+            grip
         ]
 
         place_pose = [
@@ -308,7 +306,7 @@ class CraneGUI(QWidget):
             35,
             -85,
             55,
-            -35
+            grip
         ]
 
         release_pose = [
