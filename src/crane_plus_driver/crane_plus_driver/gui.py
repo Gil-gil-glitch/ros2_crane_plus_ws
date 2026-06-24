@@ -1,26 +1,12 @@
-#!/usr/bin/env python3
-
-import sys
-import math
-
-import rclpy
-from rclpy.node import Node
-
-from sensor_msgs.msg import JointState
-from std_msgs.msg import Int32
-
-from PyQt5.QtWidgets import (
-    QApplication,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QLabel,
-    QSlider,
-    QPushButton,
-)
-
+#!/usr/bin/env python3 
+import sys 
+import math 
+import rclpy 
+from rclpy.node import Node 
+from sensor_msgs.msg import JointState 
+from std_msgs.msg import Int32 
+from PyQt5.QtWidgets import ( QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider, QPushButton, ) 
 from PyQt5.QtCore import Qt, QTimer
-
 
 class RosPublisher(Node):
 
@@ -38,8 +24,7 @@ class RosPublisher(Node):
             "/crane_plus_speed",
             10
         )
-
-
+        
 class CraneGUI(QWidget):
 
     def __init__(self, ros_node):
@@ -49,6 +34,8 @@ class CraneGUI(QWidget):
 
         self.setWindowTitle("Crane+ Control Panel")
         self.resize(1000, 600)
+
+        self.pick_state = "idle"
 
         self.joint_names = [
             "crane_plus_joint1",
@@ -142,26 +129,38 @@ class CraneGUI(QWidget):
         #
         button_row = QHBoxLayout()
 
-        home_button = QPushButton("Home Position")
-        home_button.clicked.connect(
+        self.home_button = QPushButton("Home Position")
+        self.home_button.clicked.connect(
             self.home_position
         )
 
-        pick_button = QPushButton("Pick Can")
-        pick_button.clicked.connect(
-            self.pick_sequence
+        self.pick_button = QPushButton("Pick Can")
+        self.pick_button.clicked.connect(
+            self.pick_can
         )
 
-        button_row.addWidget(home_button)
-        button_row.addWidget(pick_button)
+        self.confirm_button = QPushButton("Confirm Grip")
+        self.confirm_button.clicked.connect(
+            self.confirm_grip
+        )
+
+        self.place_button = QPushButton("Place Can")
+        self.place_button.clicked.connect(
+            self.place_can
+        )
+
+        self.confirm_button.setEnabled(False)
+        self.place_button.setEnabled(False)
+
+        button_row.addWidget(self.home_button)
+        button_row.addWidget(self.pick_button)
+        button_row.addWidget(self.confirm_button)
+        button_row.addWidget(self.place_button)
 
         self.layout.addLayout(button_row)
 
         self.setLayout(self.layout)
 
-        #
-        # Publish initial speed
-        #
         self.update_speed(
             self.speed_slider.value()
         )
@@ -210,8 +209,13 @@ class CraneGUI(QWidget):
 
     def home_position(self):
 
+        self.pick_state = "idle"
+
+        self.confirm_button.setEnabled(False)
+        self.place_button.setEnabled(False)
+
         self.status_label.setText(
-            "Status: Moving Home"
+            "Status: Returning Home"
         )
 
         home_pose = [
@@ -224,51 +228,132 @@ class CraneGUI(QWidget):
 
         self.apply_pose(home_pose)
 
-    def pick_sequence(self):
+    def pick_can(self):
 
         self.status_label.setText(
-            "Status: Picking Soda Can"
+            "Approaching soda can..."
         )
 
         #
-        # Adjust after testing
+        # Tune these values on the real robot
         #
         approach_pose = [
             0,
             35,
             -85,
             55,
-            25
-        ]
-
-        grasp_pose = [
-            0,
-            35,
-            -85,
-            55,
-            -15
+            -35
         ]
 
         self.apply_pose(
             approach_pose
         )
 
-        QTimer.singleShot(
-            1000,
-            lambda:
-            self.apply_pose(
-                grasp_pose
-            )
+        self.pick_state = "approaching"
+
+        self.confirm_button.setEnabled(True)
+
+        self.status_label.setText(
+            "Check grip then press Confirm Grip"
+        )
+
+    def confirm_grip(self):
+
+        if self.pick_state != "approaching":
+            return
+
+        self.status_label.setText(
+            "Lifting can..."
+        )
+
+        lift_pose = [
+            0,
+            10,
+            -45,
+            20,
+            -35
+        ]
+
+        self.apply_pose(
+            lift_pose
+        )
+
+        self.pick_state = "grasped"
+
+        self.place_button.setEnabled(True)
+
+        self.status_label.setText(
+            "Can lifted. Press Place Can."
+        )
+
+    def place_can(self):
+
+        if self.pick_state != "grasped":
+            return
+
+        self.status_label.setText(
+            "Placing can..."
+        )
+
+        rotate_pose = [
+            90,
+            10,
+            -45,
+            20,
+            -35
+        ]
+
+        place_pose = [
+            90,
+            35,
+            -85,
+            55,
+            -35
+        ]
+
+        release_pose = [
+            90,
+            35,
+            -85,
+            55,
+            25
+        ]
+
+        self.apply_pose(
+            rotate_pose
         )
 
         QTimer.singleShot(
             1500,
             lambda:
-            self.status_label.setText(
-                "Status: Pick Complete"
+            self.apply_pose(
+                place_pose
             )
         )
 
+        QTimer.singleShot(
+            3000,
+            lambda:
+            self.apply_pose(
+                release_pose
+            )
+        )
+
+        QTimer.singleShot(
+            3500,
+            self.finish_place
+        )
+
+    def finish_place(self):
+
+        self.pick_state = "idle"
+
+        self.confirm_button.setEnabled(False)
+        self.place_button.setEnabled(False)
+
+        self.status_label.setText(
+            "Can placed successfully."
+        )
 
 def main():
 
