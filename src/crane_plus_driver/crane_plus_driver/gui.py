@@ -233,19 +233,39 @@ class CraneGUI(QWidget):
             "Approaching soda can..."
         )
 
-        #
-        # Tune these values on the real robot
-        #
-        approach_pose = [
+        initialthingy_pose = {
+            50,
+            97,
+            -77,
             0,
-            35,
-            -85,
-            55,
-            -35
-        ]
+            -37
+        }
 
         self.apply_pose(
+            initialthingy_pose
+        )
+        #
+        # Tune these values on the real robot
+        # 15.5 cm
+        approach_pose = [ 
+            0,
+            97,
+            -77,
+            70,
+            0
+        ]
+        """
+        self.apply_pose(
             approach_pose
+        )
+        """
+
+        QTimer.singleShot(
+            1500,
+            lambda:
+            self.apply_pose(
+                approach_pose
+            )
         )
 
         self.pick_state = "approaching"
