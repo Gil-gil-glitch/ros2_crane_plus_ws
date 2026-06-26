@@ -144,18 +144,32 @@ class CraneGUI(QWidget):
             self.confirm_grip
         )
 
-        self.place_button = QPushButton("Place Can")
-        self.place_button.clicked.connect(
-            self.place_can
+        self.placeLeft_button = QPushButton("Place Can Left")
+        self.placeLeft_button.clicked.connect(
+            self.place_can_left
+        )
+
+        self.placeRight_button = QPushButton("Place Can Right")
+        self.placeRight_button.clicked.connect(
+            self.place_can_right
+        )
+
+        self.catapult_button = QPushButton("Catapult Can")
+        self.catapult_button.clicked.connect(
+            self.catapult_can
         )
 
         self.confirm_button.setEnabled(False)
-        self.place_button.setEnabled(False)
+        self.placeLeft_button.setEnabled(False)
+        self.placeRight_button.setEnabled(False)
+        self.catapult_button.setEnabled(False)
 
         button_row.addWidget(self.home_button)
         button_row.addWidget(self.pick_button)
         button_row.addWidget(self.confirm_button)
-        button_row.addWidget(self.place_button)
+        button_row.addWidget(self.placeLeft_button)
+        button_row.addWidget(self.placeRight_button)
+        button_row.addWidget(self.catapult_button)
 
         self.layout.addLayout(button_row)
 
@@ -211,7 +225,9 @@ class CraneGUI(QWidget):
         self.pick_state = "idle"
 
         self.confirm_button.setEnabled(False)
-        self.place_button.setEnabled(False)
+        self.placeLeft_button.setEnabled(False)
+        self.placeRight_button.setEnabled(False)
+        self.catapult_button.setEnabled(False)
 
         self.status_label.setText(
             "Status: Returning Home"
@@ -234,11 +250,11 @@ class CraneGUI(QWidget):
         )
 
         initialthingy_pose = {
-            50,
-            97,
-            -77,
             0,
-            -37
+            35,
+            -100,
+            0,
+            -35
         }
 
         self.apply_pose(
@@ -247,12 +263,29 @@ class CraneGUI(QWidget):
         #
         # Tune these values on the real robot
         # 15.5 cm
+        
+        approach_pose = [ 
+            0,
+            90,
+            -100,
+            70,
+            -35
+        ]
+
+        QTimer.singleShot(
+            2500,
+            lambda:
+            self.apply_pose(
+                approach_pose
+            )
+        )
+
         approach_pose = [ 
             0,
             97,
-            -77,
+            -60,
             70,
-            0
+            -35
         ]
         """
         self.apply_pose(
@@ -261,7 +294,7 @@ class CraneGUI(QWidget):
         """
 
         QTimer.singleShot(
-            1500,
+            2500,
             lambda:
             self.apply_pose(
                 approach_pose
@@ -293,12 +326,14 @@ class CraneGUI(QWidget):
         self.apply_pose(lift_pose)
 
         self.pick_state = "grasped"          # ← this was missing
-        self.place_button.setEnabled(True)   # ← this was also missing
+        self.placeLeft_button.setEnabled(True)
+        self.placeRight_button.setEnabled(True)   
+        self.catapult_button.setEnabled(True)
         self.status_label.setText(
             "Can lifted. Press Place Can."
         )
 
-    def place_can(self):
+    def place_can_left(self):
 
         grip = self.sliders[4].value()
 
@@ -319,18 +354,124 @@ class CraneGUI(QWidget):
 
         place_pose = [
             90,
-            35,
-            -85,
-            55,
+            95,
+            -40,
+            50,
             grip
         ]
 
         release_pose = [
             90,
-            35,
-            -85,
-            55,
-            25
+            95,
+            -45,
+            50,
+            -25
+        ]
+
+        self.apply_pose(
+            rotate_pose
+        )
+
+        QTimer.singleShot(
+            1500,
+            lambda:
+            self.apply_pose(
+                place_pose
+            )
+        )
+
+        QTimer.singleShot(
+            3000,
+            lambda:
+            self.apply_pose(
+                release_pose
+            )
+        )
+
+        QTimer.singleShot(
+            3500,
+            self.finish_place
+        )
+    
+    def catapult_can(self):
+        grip = self.sliders[4].value()
+
+        self.status_label.setText("Catapulting can...")
+
+        approach_pose = [
+            0,
+            90,
+            -60,
+            70,
+            grip
+        ]
+
+        throw_pose = [
+            0,
+            5,
+            -5,
+            5,
+            grip
+        ]
+
+        thrown_pose = [
+            0,
+            -20,
+            20,
+            -20,
+            grip - 25
+        ]
+
+        self.apply_pose(approach_pose)
+
+        QTimer.singleShot(
+            2000,
+            lambda: self.apply_pose(throw_pose)
+        )
+
+        QTimer.singleShot(
+            2150,
+            lambda: self.apply_pose(thrown_pose)
+        )
+
+        QTimer.singleShot(
+            2600,
+            self.finish_place
+        )
+
+    def place_can_right(self):
+
+        grip = self.sliders[4].value()
+
+        if self.pick_state != "grasped":
+            return
+
+        self.status_label.setText(
+            "Placing can..."
+        )
+
+        rotate_pose = [
+            -90,
+            10,
+            -45,
+            20,
+            grip
+        ]
+
+        place_pose = [
+            -90,
+            95,
+            -40,
+            50,
+            grip
+        ]
+
+        release_pose = [
+            -90,
+            95,
+            -45,
+            50,
+            -25
         ]
 
         self.apply_pose(
@@ -363,7 +504,9 @@ class CraneGUI(QWidget):
         self.pick_state = "idle"
 
         self.confirm_button.setEnabled(False)
-        self.place_button.setEnabled(False)
+        self.placeLeft_button.setEnabled(False)
+        self.placeRight_button.setEnabled(False) 
+        self.catapult_button.setEnabled(False)
 
         self.status_label.setText(
             "Can placed successfully."
